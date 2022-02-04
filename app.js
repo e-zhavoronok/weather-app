@@ -1,8 +1,20 @@
-const request = require('request');
+const geocode = require('./utils/geocode');
+const forecast = require('./utils/forecast');
 
-const url = 'http://api.weatherstack.com/current?access_key=2a869bc9aa64d46e2ae976b47168654a&query=37.8267,-122.4233';
+location = process.argv[2];
 
-request({ url: url }, (error, response) => {
-    const data = JSON.parse(response.body);
-    console.log(data.current);
-});
+if (location) {
+    geocode(location, (error, { latitude, longtitude, location } = {}) => {
+        if (error) {
+            return console.log(error);
+        }
+
+        forecast(latitude, longtitude, (error, forecastData) => {
+            if (error) {
+                return console.log(error);
+            }
+            console.log(location);
+            console.log(forecastData);
+        });
+    })
+}
